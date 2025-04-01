@@ -48,16 +48,36 @@ export default function App() {
         })
     }
 
-    function handleChange(name, value) {
+    function handleChange(name, key, value) {
         console.log(name)
         console.log(value)
-        setApiData((prev) => {
-            return {
+        console.log(key)
+
+        function processContent(messageContent, value) {
+            if (Array.isArray(messageContent)){
+                return messageContent.content.map(contentDict => {
+                    return{
+                        ...contentDict,
+                        text: value
+                    }
+                })
+            }
+            return value
+        }
+
+        setApiData((prev) => { 
+            return { 
                 ...prev,
                 jsonline:{
-                    ...prev.jsonline,
-                    messages: prev.jsonline.messages.map((message, index) => {
-                        return index === name ? value : message; // verificar se é content - text ou só content e quando tiver uma mudança só mudar o content / text.
+                    ...prev.jsonline, 
+                    messages: prev.jsonline.messages.map((message, index) => { 
+                        return index === name ? { 
+                            ...message, 
+                            content: processContent(message.content, value)
+                        } : { 
+                            ...message,
+                            content: message.content
+                        }; 
                     })
                 }
             }

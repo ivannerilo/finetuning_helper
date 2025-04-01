@@ -2,16 +2,18 @@ import {useState, useEffect} from 'react';
 
 export default function MessagesBox({text, role, name, handleChange}){
     const [textState, setTextState] = useState(text)
+    const [roleState, setRoleState] = useState(role)
 
     useEffect(() => {
         setTextState(text);
+        setRoleState(role);
     }, [text]);
 
-    const changeInputValue = (value) => {
+    function changeInputValue(value, key){
         console.log("ChangeInput value:")
         console.log(value)
         setTextState(value)
-        handleChange(name, value)
+        handleChange(name, key, value)
     }
 
     return(
@@ -20,7 +22,7 @@ export default function MessagesBox({text, role, name, handleChange}){
             <span>{name}</span>
             <textarea 
                 name={name}
-                onChange={(event) => changeInputValue(event.target.value)}
+                onChange={(event) => changeInputValue(event.target.value, "content")}
                 defaultValue={textState}
                 rows='20'
                 cols='200'
