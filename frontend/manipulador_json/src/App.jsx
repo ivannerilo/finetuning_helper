@@ -1,6 +1,7 @@
 import React from 'react'
 import MessagesBox from './components/MessagesBox.jsx';
 import MessagesForm from './components/MessagesForm.jsx';
+import CreateBox from './components/CreateBox.jsx';
 
 export default function App() {
     const [lineNumber, setLineNumber] = React.useState(0);
@@ -46,6 +47,26 @@ export default function App() {
                 "jsonline": apiData.jsonline
             })
         })
+    }
+
+    function handleAppend(event) {
+        event.preventDefault()
+        const form = event.currentTarget;
+        const formData = form.append.value
+        // const texto = formData.get("append")
+        // const textoLimpo = texto.trim().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
+        // formData.append('texto', textoLimpo);
+        
+        fetch("http://127.0.0.1:8000/append/jsonfile.jsonl", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "jsonline": JSON.stringify(formData)
+            })
+        })
+        .then(response => console.log(response));
     }
 
     function handleChange(name, key, value) {
@@ -150,7 +171,15 @@ export default function App() {
                         <button onClick={() => setMode("view")}>View</button>
                         <button onClick={() => setMode("edit")}>Edit</button>
                     </div>
-                    <p>Append</p>
+                    <form onSubmit={handleAppend}>
+                        <label>Coloque seu JSON aqui:</label>
+                        <textarea
+                            rows="50"
+                            cols="220"
+                            name="append"
+                        ></textarea>
+                        <button>Enviar</button>
+                    </form>
                 </div>
             )
         default:
