@@ -1,26 +1,53 @@
 import React from 'react'
 import MessagesBox from './components/MessagesBox.jsx';
 import MessagesForm from './components/MessagesForm.jsx';
-import CreateBox from './components/CreateBox.jsx';
+// import CreateBox from './components/CreateBox.jsx';
+import {jsonFormater } from './utils.js';
 
 export default function App() {
+    const [userFiles, setUserFiles] = React.useState(null)
     const [lineNumber, setLineNumber] = React.useState(0);
     const [apiData, setApiData] = React.useState({});
-    const [mode, setMode] = React.useState('view');
+    const [mode, setMode] = React.useState('home');
 
-    React.useEffect(() => {
-        fetch(`http://127.0.0.1:8000/acess/treinamento_final31.jsonl/${lineNumber}`, {
-            method: "GET"
+    React.useEffect(() => { // No começo do renderização do componente, ele verifica se o user já tem uma sessionKey.
+            let sessionKey = localStorage.getItem("sessionKey")
+
+            if (!sessionKey){ // Caso o user não tiver, ele faz uma solicitação para o servidor para criar uma e a armazena no localStorage.
+                fetch("http://127.0.0.1:8000", {
+                    method: "GET",
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem("sessionKey", data.sessionkey)
+                })
+            }
+    
+            fetch("http://127.0.0.1:8000/list", { // Agora o user tendo uma sessionKey, fazemos o fetch para ver quais arquivos ele tem guardado.
+                method: "GET",
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                setUserFiles(data.user_files ? data.user_files : null)
+            })
+    },[lineNumber])
+    
+    function openFile(fileName){
+        fetch(`http://127.0.0.1:8000/acess/${fileName}/${lineNumber}`, {
+            method: "GET",
+            credentials: 'include'
         })
         .then(response => response.json())
         .then(data => {
             console.log("Data:")
             console.log(data)
             setApiData(data ? data : null)
+            setMode("view")
         })
         .catch(err => console.log(err));
-    }, [lineNumber]);
-
+    }
     function changeLineNumber(op) {
         const newLineNumber = op === '+' ? lineNumber + 1: lineNumber - 1;
         const endLineIndex = apiData.filesize - 1;
@@ -40,6 +67,7 @@ export default function App() {
 
         fetch(`http://127.0.0.1:8000/edit/treinamento_final31.jsonl/${lineNumber}`, {
             method: "POST",
+            credentials: 'include',
             headers: {
                 "Content-Type": "application/json"
             },
@@ -53,17 +81,16 @@ export default function App() {
         event.preventDefault()
         const form = event.currentTarget;
         const formData = form.append.value
-        // const texto = formData.get("append")
-        // const textoLimpo = texto.trim().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ');
-        // formData.append('texto', textoLimpo);
+        const formatedJson = jsonFormater(formData.toString())
         
-        fetch("http://127.0.0.1:8000/append/jsonfile.jsonl", {
+        fetch(`http://127.0.0.1:8000/append/${apiData.filename}`, {
             method: "POST",
+            credentials: 'include',
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                "jsonline": JSON.stringify(formData)
+                "jsonline_string": formatedJson
             })
         })
         .then(response => console.log(response));
@@ -107,6 +134,37 @@ export default function App() {
 
     //renderização final.
     switch (mode) {
+        case "home":
+            try{
+                const files = userFiles.map(file => {
+                    if (file != null){
+                        return <li onClick={() => openFile(file)}>{file}</li>
+                    }
+                    return "Você não tem arquivos ainda!"
+                })
+                return(
+                    <>
+                        <h1>O que deseja fazer?</h1>
+                        <button>Criar novo JSON</button>
+                        <p>Acessar arquivo:</p>
+                        <ul>
+                            {files}
+                        </ul>
+                    </>
+                )
+            }
+            catch{
+                return(
+                    <>
+                        <h1>O que deseja fazer?</h1>
+                        <button>Criar novo JSON</button>
+                        <p>Acessar arquivo:</p>
+                        <ul>
+                            No files Found.
+                        </ul>
+                    </>
+                )
+            }
         case "view":
             let messagesComponents = [];
             if (apiData && apiData.jsonline && apiData.jsonline.messages) {
