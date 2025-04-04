@@ -7,6 +7,7 @@ export default function MessagesBox(props){
                 value={props.text}
                 rows='20'
                 cols='200'
+                readOnly={true}
             ></textarea>
         </>
     )

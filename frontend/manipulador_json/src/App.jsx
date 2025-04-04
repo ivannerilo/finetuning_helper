@@ -1,8 +1,9 @@
 import React from 'react'
-import MessagesBox from './components/MessagesBox.jsx';
-import MessagesForm from './components/MessagesForm.jsx';
-// import CreateBox from './components/CreateBox.jsx';
 import {jsonFormater } from './utils.js';
+import HomeView from './components/HomeView.jsx';
+import AcessView from './components/AcessView.jsx';
+import EditView from './components/EditView.jsx';
+import AppendView from './components/AppendView.jsx';
 
 export default function App() {
     const [userFiles, setUserFiles] = React.useState(null)
@@ -11,27 +12,47 @@ export default function App() {
     const [mode, setMode] = React.useState('home');
 
     React.useEffect(() => { // No começo do renderização do componente, ele verifica se o user já tem uma sessionKey.
-            let sessionKey = localStorage.getItem("sessionKey")
+        let sessionKey = localStorage.getItem("sessionKey")
 
-            if (!sessionKey){ // Caso o user não tiver, ele faz uma solicitação para o servidor para criar uma e a armazena no localStorage.
-                fetch("http://127.0.0.1:8000", {
-                    method: "GET",
-                    credentials: 'include'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    localStorage.setItem("sessionKey", data.sessionkey)
-                })
-            }
-    
-            fetch("http://127.0.0.1:8000/list", { // Agora o user tendo uma sessionKey, fazemos o fetch para ver quais arquivos ele tem guardado.
+        if (!sessionKey){ // Caso o user não tiver, ele faz uma solicitação para o servidor para criar uma e a armazena no localStorage.
+            fetch("http://127.0.0.1:8000", {
                 method: "GET",
                 credentials: 'include'
             })
             .then(response => response.json())
             .then(data => {
-                setUserFiles(data.user_files ? data.user_files : null)
+                localStorage.setItem("sessionKey", data.sessionkey)
             })
+        }
+
+        fetch("http://127.0.0.1:8000/list", { // Agora o user tendo uma sessionKey, fazemos o fetch para ver quais arquivos ele tem guardado.
+            method: "GET",
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            setUserFiles(data.user_files ? data.user_files : null)
+        })
+    },[])
+
+    React.useEffect(() => {
+        console.log(`O modo é ${mode}`)
+        if (mode !== "home") {
+            console.log(`Irei fazer o fetch no modo: ${mode}`)
+            console.log(apiData)
+            fetch(`http://127.0.0.1:8000/acess/${apiData.filename}/${lineNumber}`, {
+                method: "GET",
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Data:")
+                console.log(data)
+                setApiData(data ? data : null)
+                setMode("acess")
+            })
+            .catch(err => console.log(err));
+        }
     },[lineNumber])
     
     function openFile(fileName){
@@ -44,10 +65,11 @@ export default function App() {
             console.log("Data:")
             console.log(data)
             setApiData(data ? data : null)
-            setMode("view")
+            setMode("acess")
         })
         .catch(err => console.log(err));
     }
+
     function changeLineNumber(op) {
         const newLineNumber = op === '+' ? lineNumber + 1: lineNumber - 1;
         const endLineIndex = apiData.filesize - 1;
@@ -85,7 +107,7 @@ export default function App() {
         
         fetch(`http://127.0.0.1:8000/append/${apiData.filename}`, {
             method: "POST",
-            credentials: 'include',
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -135,110 +157,39 @@ export default function App() {
     //renderização final.
     switch (mode) {
         case "home":
-            try{
-                const files = userFiles.map(file => {
-                    if (file != null){
-                        return <li onClick={() => openFile(file)}>{file}</li>
-                    }
-                    return "Você não tem arquivos ainda!"
-                })
-                return(
-                    <>
-                        <h1>O que deseja fazer?</h1>
-                        <button>Criar novo JSON</button>
-                        <p>Acessar arquivo:</p>
-                        <ul>
-                            {files}
-                        </ul>
-                    </>
-                )
-            }
-            catch{
-                return(
-                    <>
-                        <h1>O que deseja fazer?</h1>
-                        <button>Criar novo JSON</button>
-                        <p>Acessar arquivo:</p>
-                        <ul>
-                            No files Found.
-                        </ul>
-                    </>
-                )
-            }
-        case "view":
-            let messagesComponents = [];
-            if (apiData && apiData.jsonline && apiData.jsonline.messages) {
-                messagesComponents = apiData.jsonline.messages.map(message => {
-                    const comp = <MessagesBox 
-                        text={Array.isArray(message.content) ? message.content[0].text : message.content}
-                        role={message.role}
-                    />
-                    return comp;
-                })
-            }
             return(
-                <div>
-                    <h1>Line: {lineNumber}</h1>
-                    <div>
-                        <button onClick={() => setMode("edit")}>Edit</button>
-                        <button onClick={() => setMode("append")}>Append</button>
-                    </div>
-                    <div>
-                        <button onClick={() => changeLineNumber('-')}>Back</button>
-                        <button onClick={() => changeLineNumber('+')}>Next</button>                
-                    </div>
-                    {messagesComponents ? messagesComponents.slice(1) : "Carregando..."}
-                </div>
+                <HomeView
+                    apiData={apiData}
+                    openFile={openFile}
+                    userFiles={userFiles}
+                ></HomeView>
+            )
+        case "acess":
+            return(
+                <AcessView
+                    apiData={apiData}
+                    lineNumber={lineNumber}
+                    setMode={setMode}
+                    changeLineNumber={changeLineNumber}
+                ></AcessView>
             )
         case "edit":
-            let messagesForm = [];
-            if (apiData && apiData.jsonline && apiData.jsonline.messages) {
-                let id = 0;
-                messagesForm = apiData.jsonline.messages.map(message => {
-                    const comp = <MessagesForm
-                        text={Array.isArray(message.content) ? message.content[0].text : message.content}
-                        role={message.role}
-                        name={id++} // ++ no java script passa o valor e depois incrementa ele.
-                        handleChange={handleChange}
-                    />
-                    return comp;
-                })
-            }
-            
             return(
-                <div>
-                    <h1>Line: {lineNumber}</h1>
-                    <div>
-                        <button onClick={() => setMode("view")}>View</button>
-                        <button onClick={() => setMode("append")}>Append</button>
-                    </div>
-                    <div>
-                        <button onClick={() => changeLineNumber('-')}>Back</button>
-                        <button onClick={() => changeLineNumber('+')}>Next</button>                
-                    </div>
-                    <form onSubmit={handleEdit}>
-                        {messagesForm ? messagesForm : "Carregando..."}
-                        <button type='submit'>Edit</button>
-                    </form>
-                </div>
+                <EditView
+                    apiData={apiData}
+                    lineNumber={lineNumber}
+                    handleChange={handleChange}
+                    setMode={setMode}
+                    changeLineNumber={changeLineNumber}
+                    handleEdit={handleEdit}
+                ></EditView>
             )
         case "append":
             return(
-                <div>
-                    <div>
-                        <button onClick={() => setMode("view")}>View</button>
-                        <button onClick={() => setMode("edit")}>Edit</button>
-                    </div>
-                    <form onSubmit={handleAppend}>
-                        <label>Coloque seu JSON aqui:</label>
-                        <textarea
-                            rows="50"
-                            cols="220"
-                            name="append"
-                        ></textarea>
-                        <button>Enviar</button>
-                    </form>
-                </div>
+                <AppendView
+                    handleAppend={handleAppend}
+                    setMode={setMode}
+                ></AppendView>
             )
         default:
             return(

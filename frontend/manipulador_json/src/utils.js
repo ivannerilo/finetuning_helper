@@ -29,4 +29,3 @@ export function jsonFormater(jsonString){
         return JSON.stringify(jsonDict);
     }
 }
-
