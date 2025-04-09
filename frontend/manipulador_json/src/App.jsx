@@ -1,5 +1,5 @@
 import React from 'react'
-import {jsonFormater } from './utils.js';
+import {jsonFormater, getCookie} from './utils.js';
 import HomeView from './components/HomeView.jsx';
 import AcessView from './components/AcessView.jsx';
 import EditView from './components/EditView.jsx';
@@ -12,17 +12,15 @@ export default function App() {
     const [mode, setMode] = React.useState('home');
 
     React.useEffect(() => { // No começo do renderização do componente, ele verifica se o user já tem uma sessionKey.
-        let sessionKey = localStorage.getItem("sessionKey")
+        let sessionKey = getCookie("sessionKey")
+        let csrfToken = getCookie("csrfToken")
 
-        if (!sessionKey){ // Caso o user não tiver, ele faz uma solicitação para o servidor para criar uma e a armazena no localStorage.
+        if (!sessionKey || !csrfToken){ // Caso o user não tiver, ele faz uma solicitação para o servidor para criar uma e a armazena no localStorage.
             fetch("http://127.0.0.1:8000", {
                 method: "GET",
                 credentials: 'include'
             })
             .then(response => response.json())
-            .then(data => {
-                localStorage.setItem("sessionKey", data.sessionkey)
-            })
         }
 
         fetch("http://127.0.0.1:8000/list", { // Agora o user tendo uma sessionKey, fazemos o fetch para ver quais arquivos ele tem guardado.
@@ -32,11 +30,11 @@ export default function App() {
         .then(response => response.json())
         .then(data => {
             setUserFiles(data.user_files ? data.user_files : null)
+            
         })
     },[])
 
     React.useEffect(() => {
-        console.log(`O modo é ${mode}`)
         if (mode !== "home") {
             console.log(`Irei fazer o fetch no modo: ${mode}`)
             console.log(apiData)
@@ -54,6 +52,7 @@ export default function App() {
             .catch(err => console.log(err));
         }
     },[lineNumber])
+    
     
     function openFile(fileName){
         fetch(`http://127.0.0.1:8000/acess/${fileName}/${lineNumber}`, {
@@ -87,12 +86,13 @@ export default function App() {
     function handleEdit(event) {
         event.preventDefault()
 
-        fetch(`http://127.0.0.1:8000/edit/treinamento_final31.jsonl/${lineNumber}`, {
+        fetch(`http://127.0.0.1:8000/edit/${apiData.filename}/${lineNumber}`, {
             method: "POST",
             credentials: 'include',
             headers: {
-                "Content-Type": "application/json"
-            },
+                "Content-Type": "application/json",
+                "X-CSRFtoken": getCookie("csrfToken")
+            },  
             body: JSON.stringify({
                 "jsonline": apiData.jsonline
             })
@@ -109,7 +109,8 @@ export default function App() {
             method: "POST",
             credentials: "include",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRFtoken": getCookie("csrfToken")
             },
             body: JSON.stringify({
                 "jsonline_string": formatedJson
