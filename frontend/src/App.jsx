@@ -1,26 +1,34 @@
-import React from 'react'
+import {useEffect, useState} from 'react'
 import {jsonFormater, getCookie} from './utils.js';
 import HomeView from './components/HomeView.jsx';
 import AcessView from './components/AcessView.jsx';
 import EditView from './components/EditView.jsx';
 import AppendView from './components/AppendView.jsx';
+import CreateBox from './components/CreateBox.jsx';
 
 export default function App() {
-    const [userFiles, setUserFiles] = React.useState(null)
-    const [lineNumber, setLineNumber] = React.useState(0);
-    const [apiData, setApiData] = React.useState({});
-    const [mode, setMode] = React.useState('home');
 
-    React.useEffect(() => { // No começo do renderização do componente, ele verifica se o user já tem uma sessionKey.
-        fetch("http://127.0.0.1:8000", {
-            method: "GET",
-            credentials: 'include'
-        })
-        .then(response => response.json())
+    // States -----------
+    const [userFiles, setUserFiles] = useState(null)
+    const [lineNumber, setLineNumber] = useState(0);
+    const [apiData, setApiData] = useState({});
+    const [mode, setMode] = useState('home');
 
+    // Effects -----------
+    useEffect(() => { // No começo do renderização do componente, ele verifica se o user já tem uma sessionKey.
+        let sessionKey = getCookie("sessionKey")
+        let csrfToken = getCookie("csrfToken")
+
+        if (!sessionKey || !csrfToken){
+            fetch("http://127.0.0.1:8000", {
+                method: "GET",
+                credentials: 'include'
+            })
+            .then(response => response.json())
+        }
     },[])
-    
-    React.useEffect(() => { // No começo do renderização do componente, ele verifica se o user já tem uma sessionKey.
+
+    useEffect(() => { // No começo do renderização do componente, ele verifica se o user já tem uma sessionKey.
         fetch("http://127.0.0.1:8000/list", { // Agora o user tendo uma sessionKey, fazemos o fetch para ver quais arquivos ele tem guardado.
             method: "GET",
             credentials: 'include'
@@ -30,9 +38,9 @@ export default function App() {
             setUserFiles(data.user_files ? data.user_files : null)
             
         })
-    },[userFiles])
+    },[])
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (mode !== "home") {
             console.log(`Irei fazer o fetch no modo: ${mode}`)
             console.log(apiData)
@@ -50,8 +58,8 @@ export default function App() {
             .catch(err => console.log(err));
         }
     },[lineNumber])
-    
-    
+
+    // Functions -----------
     function openFile(fileName){
         fetch(`http://127.0.0.1:8000/acess/${fileName}/${lineNumber}`, {
             method: "GET",
@@ -81,6 +89,8 @@ export default function App() {
         }
     }
 
+
+    // Handlers ---------
     function handleEdit(event) {
         event.preventDefault()
 
@@ -95,6 +105,8 @@ export default function App() {
                 "jsonline": apiData.jsonline
             })
         })
+
+        setMode("acess")
     }
 
     function handleAppend(event) {
@@ -115,6 +127,37 @@ export default function App() {
             })
         })
         .then(response => console.log(response));
+
+        setMode("acess")
+    }
+
+    function handleCreate(event) {
+        event.preventDefault()
+        const form = event.currentTarget
+        const formData = form.create.value
+        const formatedJson = jsonFormater(formData.toString())
+        
+        fetch(`http://127.0.0.1:8000/create`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFtoken": getCookie("csrfToken")
+            },
+            body: JSON.stringify({
+                "jsonline_string": formatedJson
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            openFile(data.new_file)
+            setUserFiles([
+                ...userFiles,
+                data.new_file
+            ])
+        });
+
+
     }
 
     function handleChange(name, key, value) {
@@ -124,12 +167,10 @@ export default function App() {
 
         function processContent(messageContent, value) {
             if (Array.isArray(messageContent)){
-                return messageContent.content.map(contentDict => {
-                    return{
-                        ...contentDict,
-                        text: value
-                    }
-                })
+                return [{
+                    ...messageContent[0],
+                    text: value
+                }]
             }
             return value
         }
@@ -160,6 +201,7 @@ export default function App() {
                 <HomeView
                     apiData={apiData}
                     openFile={openFile}
+                    setMode={setMode}
                     userFiles={userFiles}
                 ></HomeView>
             )
@@ -189,6 +231,12 @@ export default function App() {
                     handleAppend={handleAppend}
                     setMode={setMode}
                 ></AppendView>
+            )
+        case "create":
+            return(
+                <CreateBox
+                    handleCreate={handleCreate}
+                ></CreateBox>
             )
         default:
             return(

@@ -73,7 +73,7 @@ SESSION_COOKIE_SECURE = False
 # para acessar os cookies rode no : http://127.0.0.1:3000
 
 # CONFIGURAÇÕES CSRF-TOKEN -----
-CSRF_COOKIE_NAME = "csrftoken"  # Nome do cookie
+CSRF_COOKIE_NAME = "csrftoken" # Nome do cookie
 
 CSRF_COOKIE_SAMESITE = "Lax"  
 CSRF_COOKIE_HTTPONLY = False  

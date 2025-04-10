@@ -8,7 +8,8 @@ urlpatterns = [
     path("list", views.lsfiles, name="lsfiles"),
     path("acess/<str:file_name>/<int:line_number>", views.acess, name="acess"),
     path("edit/<str:file_name>/<int:line_number>", views.edit, name="edit"),
-    path("append/<str:file_name>", views.append, name="append")
+    path("append/<str:file_name>", views.append, name="append"),
+    path("create", views.create, name="create")
 
     # path("<int:archive_num>/<str:archive_name>", views.show_json, name="show_json"),
     # path("edit/<int:archive_num>/<str:archive_name>", views.edit_json, name="edit_json"),
