@@ -1,0 +1,61 @@
+{% extends "manipulador/layout.html" %}
+
+{% block body %}
+<script>
+    function downloadFile(fileName){
+        const url = `/download/${fileName}`;
+        fetch(url).then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    throw new Error('Erro ao baixar o arquivo');
+                }
+            })
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(error => {
+                alert(error);
+            });
+    }
+
+    function deleteFile(fileName){
+        const url = `/delete/${fileName}`
+        fetch(url).then(response => {
+            if (!response.ok){
+                throw new Error("Erro ao deletar arquivo.");
+            }
+        })
+        .catch(error => {
+                alert(error);
+            });
+    }
+    
+</script>
+    <h1>Bem vindo ao manipulador de JSONL's</h1>
+    <!-- <form>
+        {% csrf_token %}
+        {{form}}
+    </form> -->
+    <form action="/{{DEFAULT_ARCHIVE_NUM}}/{{ DEFAULT_ARCHIVE_NAME }}"><button type="submit">Acessar Arquivo</button></form>
+    <form action="/create"><button type="submit">Criar Novo Json</button></form>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form}}
+        <button type="submit">Salvar</button>
+    </form>
+    <ul>
+        {% for file in user_files %}
+        <li>
+            <a href="/{{DEFAULT_ARCHIVE_NUM}}/{{file.file_name}}">{{file.file_name}}</a>
+            <button onclick="downloadFile('{{file.file_name}}')">Baixar</button>
+            <button onclick="deleteFile('{{file.file_name}}')">Deletar</button>
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

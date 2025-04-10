@@ -1,0 +1,46 @@
+# ==========================
+# Node / React (frontend)
+# ==========================
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.DS_Store
+frontend/npm-debug.log
+frontend/yarn-debug.log
+frontend/yarn-error.log
+
+# ==========================
+# Python / Django (backend)
+# ==========================
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.pot
+*.mo
+*.db
+*.db-journal
+*.env
+*.egg-info/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+backend/__pycache__/
+backend/staticfiles/
+backend/media/
+backend/json_files/files/
+
+# ==========================
+# IDEs e ferramentas
+# ==========================
+.vscode/
+.idea/
+
+# ==========================
+# Sistema operacional
+# ==========================
+.DS_Store
+Thumbs.db

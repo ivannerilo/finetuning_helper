@@ -1,0 +1,12 @@
+{% extends "manipulador/layout.html" %}
+
+{% block body %}
+    <h1>Edit Page</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% for form in lista_forms %}
+            {{ form|safe }}
+        {% endfor %}
+        <button type="submit">Salvar</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "manipulador/layout.html" %}        
+        
+        
+        
+{% block body %}
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="ação" value="next">
+            <button type="submit">Next</button>
+        </form>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="ação" value="back">
+            <button type="submit">Back</button>
+        </form>
+        <form action="/edit/{{archive_num}}/{{archive_name}}">
+            <button type="submit">Edit</button>
+        </form>
+        <form action="/append/{{archive_name}}">
+            <button type="submit">Append</button>
+        </form>
+    </div>
+    {% for content in correct_content%} 
+        {{content|safe}}
+    {% endfor %}
+{% endblock %}

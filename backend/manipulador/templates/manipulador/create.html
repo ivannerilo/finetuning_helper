@@ -1,0 +1,11 @@
+{% extends "manipulador/layout.html" %}
+
+{% block body %}
+    <h1>Crie seu JSONL's</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Salvar</button>
+    </form>
+    <p>{{ data }}</p>
+{% endblock %}
