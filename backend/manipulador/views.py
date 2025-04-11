@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse, FileResponse
 from django import forms
 from . import util
 import json
@@ -13,8 +13,8 @@ from django.middleware.csrf import get_token
 DEFAULT_FILE_NUM = 0
 DEFAULT_FILE_NAME = "jsonfile.jsonl"
 DEFAULT_WRITE_FILE = "jsonfile1.jsonl"
-DEFAUL_FILE_ROUTE = "json_files/"
-# DEFAUL_FILE_ROUTE = "json_files/files/" Antigo e certo
+# DEFAUL_FILE_ROUTE = "json_files/"
+DEFAUL_FILE_ROUTE = "json_files/files/" 
 
 @ensure_csrf_cookie
 @api_view(['GET'])
@@ -113,37 +113,42 @@ def create(request):
     
     return Response({"message": "success", "new_file": random_json_name})
 
-
-
-
+DRD_JSON_METHODS = ['GET', 'DELETE', 'POST']
+@api_view(DRD_JSON_METHODS)
+def download_rename_delete_json(request, file_name):
+    if request.method not in DRD_JSON_METHODS:
+        return Response({"message": "This view acepts only GET, POST and DELETE requests. To Download, Rename and Delete the JSON File."})
     
-    
+    match request.method:
+        case 'GET':
+            print(f"Baixou papai")
+            file = FileUser.objects.get(file_name=file_name, user_session=request.session.session_key)
+            print(f"Download => {file.file_name}")
+            response = FileResponse(open(f"{DEFAUL_FILE_ROUTE}{file.file_name}", "rb"), as_attachment=True)
+            response["content-disposition"] =  f'attachment; filename="{file_name}"'
+            return response
+            # return Response({"message": "Baixou papai"})
+        
+        case 'POST':
+            print(f"Renomeou papai {file_name}")
+            return Response({"message": "Renomeou papai"})
+        
+
+        case 'DELETE':
+            print(f"Deletou papai {file_name}")
+            # try:
+            #     file = FileUser.objects.get(file_name=file_name, user_session=request.session.session_key)
+            #     util.delete_file(file_name)
+            #     file.delete()
+            #     return Response({"message": "File Deleted!"})
+            # except:
+            #     return Response({"message": "Delete forbidden!"})
+            return Response({"message": "Deletou papai"})
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-["jsonline"]
+                
 # FUNÇÕES ANTIGAS ------------------
 # class editForm(forms.Form): 
 #     new_content = forms.CharField(

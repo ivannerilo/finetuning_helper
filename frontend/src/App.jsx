@@ -194,6 +194,46 @@ export default function App() {
         })   
     }
 
+    function handleDownload(fileName){
+        fetch(`http://127.0.0.1:8000/drd/${fileName}`, {
+            method: "GET",
+            credentials: 'include'
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = url
+            a.download = `${fileName}`
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+            URL.revokeObjectURL(url)
+        })
+    }
+
+    function handleRename(fileName){
+        fetch(`http://127.0.0.1:8000/drd/${fileName}`, {
+            method: "POST",
+            headers: {
+                "X-CSRFtoken": getCookie("csrfToken")
+            },
+            credentials: 'include'
+        })
+        .then(response => response.json())
+    }
+
+    function handleDelete(fileName){
+        fetch(`http://127.0.0.1:8000/drd/${fileName}`, {
+            method: "DELETE",
+            headers: {
+                "X-CSRFtoken": getCookie("csrfToken")
+            },
+            credentials: 'include'
+        })
+        .then(response => response.json())
+    }
+
     //renderização final.
     switch (mode) {
         case "home":
@@ -203,6 +243,9 @@ export default function App() {
                     openFile={openFile}
                     setMode={setMode}
                     userFiles={userFiles}
+                    handleDownload={handleDownload}
+                    handleRename={handleRename}
+                    handleDelete={handleDelete}
                 ></HomeView>
             )
         case "acess":
@@ -236,6 +279,7 @@ export default function App() {
             return(
                 <CreateBox
                     handleCreate={handleCreate}
+                    setMode={setMode}
                 ></CreateBox>
             )
         default:

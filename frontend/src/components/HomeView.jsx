@@ -1,10 +1,17 @@
-export default function HomeView({userFiles, openFile, setMode}) {
+export default function HomeView({userFiles, openFile, setMode, handleDownload, handleDelete, handleRename}) {
     let files; 
     try {
         let fileId = 0
         files = userFiles.map(file => {
             if (file !== null) {
-                return <li key={fileId++} onClick={() => openFile(file)}>{file}</li>
+                return (
+                    <div>
+                        <li key={fileId++} onClick={() => openFile(file)}>{file}</li>
+                        <button onClick={() => handleDownload(file)}>Download</button>
+                        <button onClick={() => handleDelete(file)}>Delete</button>
+                        <button onClick={() => handleRename(file)}>Rename</button>
+                    </div>
+                )
             }
            return <li key={fileId++}>Você não tem arquivos ainda!</li>
         })

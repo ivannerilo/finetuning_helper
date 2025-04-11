@@ -66,30 +66,48 @@ def json_file_size(file_name):
         jsonfiles = list(f)
         return len(jsonfiles)
 
+def json_renamer(file_user, new_name):
+    caminho_antigo = file_user.file.path
+    pasta = os.path.dirname(caminho_antigo)
+    caminho_novo = os.path.join(pasta, new_name)
+
+    os.rename(caminho_antigo, caminho_novo)
+
+    file_user.file.name = os.path.join('files', new_name)
+    file_user.file_name = new_name
+    file_user.save()
+
+    
+
+
+
+
+
+
 # Formatadores ----
-def json_formater(json_string):
-    try:
-        json_dict = json.loads(json_string)
-    except:    
-        pattern = r'response_format=\s*{\s*"type":\s*"text"\s*},?'
-        pattern2 = r',\s*"additionalProperties": False?'
-        json_string = json_string.replace("messages=", '{"messages": ')
-        json_string = re.sub(pattern, '', json_string)
-        json_string = re.sub(pattern2, '', json_string)
-        json_string = json_string.replace('tools=', '"tools": ')
-        json_string = json_string.replace('"strict": False,', "")
-        json_string = json_string.replace('"strict": True,', "")
-        json_string = json_string + '}'
-        json_dict = json.loads(json_string)
-        print(json_dict)
-    for messages in json_dict["messages"]:
-        if isinstance(messages["content"], list) and messages["role"] == "tool":
-            messages["content"] = messages["content"][0]["text"]
-        if not isinstance(messages["content"], list):
-            type_demonio = [{"type": "text", "text": f"{messages['content']}" }]
-            messages["content"] = type_demonio
-    json_string = json.dumps(json_dict)
-    return json_string
+# def json_formater(json_string):
+#     try:
+#         json_dict = json.loads(json_string)
+#     except:    
+#         pattern = r'response_format=\s*{\s*"type":\s*"text"\s*},?'
+#         pattern2 = r',\s*"additionalProperties": False?'
+#         json_string = json_string.replace("messages=", '{"messages": ')
+#         json_string = re.sub(pattern, '', json_string)
+#         json_string = re.sub(pattern2, '', json_string)
+#         json_string = json_string.replace('tools=', '"tools": ')
+#         json_string = json_string.replace('"strict": False,', "")
+#         json_string = json_string.replace('"strict": True,', "")
+#         json_string = json_string + '}'
+#         json_dict = json.loads(json_string)
+#         print(json_dict)
+#     for messages in json_dict["messages"]:
+#         if isinstance(messages["content"], list) and messages["role"] == "tool":
+#             messages["content"] = messages["content"][0]["text"]
+#         if not isinstance(messages["content"], list):
+#             type_demonio = [{"type": "text", "text": f"{messages['content']}" }]
+#             messages["content"] = type_demonio
+#     json_string = json.dumps(json_dict)
+#     return json_string
 
 
 # def formatador_html(json_dict):
