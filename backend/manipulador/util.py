@@ -5,8 +5,8 @@ import string
 import os
 from .models import FileUser
 
-# DEFAULT_FILE_ROUTE = "json_files/"
 DEFAULT_FILE_ROUTE = "json_files/files/" 
+# UPLOAD_TO = "files/"
 
 
 def json_reader(line_number, file_name):
@@ -50,11 +50,11 @@ def json_file_editor(json_dict, line_number, file_name):
                     jsonzinho = json.loads(json_files[i].strip())
                     file_write.write(json.dumps(jsonzinho, ensure_ascii=False)+ '\n')
 
-def delete_jsonfile(file_name):
-    file_path = os.path.join(DEFAULT_FILE_ROUTE, file_name)
-    os.remove(path)
-    f = FileUser.objects.get(file_name=file_name)
-    f.delete()
+# def delete_jsonfile(file_name):
+#     file_path = os.path.join(DEFAULT_FILE_ROUTE, file_name)
+#     os.remove(path)
+#     f = FileUser.objects.get(file_name=file_name)
+#     f.delete()
 
 def random_file_name_gen():
     n = 10
@@ -67,6 +67,7 @@ def json_file_size(file_name):
         return len(jsonfiles)
 
 def json_renamer(file_user, new_name):
+    print(f"O caminho do arquivo é {file_user.file.path}")
     caminho_antigo = file_user.file.path
     pasta = os.path.dirname(caminho_antigo)
     caminho_novo = os.path.join(pasta, new_name)
@@ -76,6 +77,8 @@ def json_renamer(file_user, new_name):
     file_user.file.name = os.path.join('files', new_name)
     file_user.file_name = new_name
     file_user.save()
+
+
 
     
 

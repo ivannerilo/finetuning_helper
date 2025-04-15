@@ -10,12 +10,6 @@ urlpatterns = [
     path("edit/<str:file_name>/<int:line_number>", views.edit, name="edit"),
     path("append/<str:file_name>", views.append, name="append"),
     path("create", views.create, name="create"),
-    path("drd/<str:file_name>", views.download_rename_delete_json, name="download_rename_delete_json")
-
-    # path("<int:archive_num>/<str:archive_name>", views.show_json, name="show_json"),
-    # path("edit/<int:archive_num>/<str:archive_name>", views.edit_json, name="edit_json"),
-    # path("create", views.create_json, name="create_json"),
-    # path("append/<str:archive_name>", views.append_json, name="append_json"),
-    # path("download/<str:archive_name>", views.download_json, name="download_json"),
-    # path("delete/<str:archive_name>", views.delete_json, name="delete_json")
+    path("drd/<str:file_name>", views.download_rename_delete_json, name="download_rename_delete_json"),
+    path("import", views.import_json, name="import_json")
 ]

@@ -5,6 +5,7 @@ import AcessView from './components/AcessView.jsx';
 import EditView from './components/EditView.jsx';
 import AppendView from './components/AppendView.jsx';
 import CreateBox from './components/CreateBox.jsx';
+import ImportView from './components/ImportView.jsx';
 
 export default function App() {
 
@@ -16,10 +17,9 @@ export default function App() {
 
     // Effects -----------
     useEffect(() => { // No começo do renderização do componente, ele verifica se o user já tem uma sessionKey.
-        let sessionKey = getCookie("sessionKey")
-        let csrfToken = getCookie("csrfToken")
+        const sessionId = getCookie("sessionid")
 
-        if (!sessionKey || !csrfToken){
+        if (!sessionId){
             fetch("http://127.0.0.1:8000", {
                 method: "GET",
                 credentials: 'include'
@@ -99,7 +99,7 @@ export default function App() {
             credentials: 'include',
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFtoken": getCookie("csrfToken")
+                "X-CSRFtoken": getCookie("csrftoken")
             },  
             body: JSON.stringify({
                 "jsonline": apiData.jsonline
@@ -120,7 +120,7 @@ export default function App() {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFtoken": getCookie("csrfToken")
+                "X-CSRFtoken": getCookie("csrftoken")
             },
             body: JSON.stringify({
                 "jsonline_string": formatedJson
@@ -142,7 +142,7 @@ export default function App() {
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFtoken": getCookie("csrfToken")
+                "X-CSRFtoken": getCookie("csrftoken")
             },
             body: JSON.stringify({
                 "jsonline_string": formatedJson
@@ -194,6 +194,23 @@ export default function App() {
         })   
     }
 
+    function handleImport(event){
+        event.preventDefault()
+        const form = event.currentTarget
+        const formData = new FormData(form)       
+        fetch("http://127.0.0.1:8000/import", {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: formData
+        })
+        .then(response => {
+            window.location.reload()
+        })
+    }
+
     function handleDownload(fileName){
         fetch(`http://127.0.0.1:8000/drd/${fileName}`, {
             method: "GET",
@@ -212,26 +229,41 @@ export default function App() {
         })
     }
 
-    function handleRename(fileName){
+    function handleRename(event, fileName){
+        event.preventDefault()
+
+        const form = event.currentTarget
+        const formData = form.new.value
+        const new_name = `${formData}.jsonl`
+
+        console.log("Eu escrevi ", formData)
         fetch(`http://127.0.0.1:8000/drd/${fileName}`, {
             method: "POST",
+            credentials: 'include',
             headers: {
-                "X-CSRFtoken": getCookie("csrfToken")
+                "X-CSRFtoken": getCookie("csrftoken"),
+                "Content-Type": "application/json"
             },
-            credentials: 'include'
+            body: JSON.stringify({ 
+                "newname": new_name,
+            })
         })
-        .then(response => response.json())
+        .then(response => {
+            window.location.reload()
+        })
     }
 
     function handleDelete(fileName){
         fetch(`http://127.0.0.1:8000/drd/${fileName}`, {
             method: "DELETE",
+            credentials: 'include',
             headers: {
-                "X-CSRFtoken": getCookie("csrfToken")
-            },
-            credentials: 'include'
+                "X-CSRFtoken": getCookie("csrftoken")
+            }
         })
-        .then(response => response.json())
+        .then(response => {
+            window.location.reload()
+        })
     }
 
     //renderização final.
@@ -281,6 +313,23 @@ export default function App() {
                     handleCreate={handleCreate}
                     setMode={setMode}
                 ></CreateBox>
+            )
+        case "import":
+            return(
+            <div>
+                <HomeView
+                    apiData={apiData}
+                    openFile={openFile}
+                    setMode={setMode}
+                    userFiles={userFiles}
+                    handleDownload={handleDownload}
+                    handleRename={handleRename}
+                    handleDelete={handleDelete}
+                ></HomeView>
+                <ImportView
+                    handleImport={handleImport}
+                ></ImportView>
+            </div>
             )
         default:
             return(
