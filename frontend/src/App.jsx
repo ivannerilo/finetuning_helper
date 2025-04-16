@@ -6,6 +6,7 @@ import EditView from './components/EditView.jsx';
 import AppendView from './components/AppendView.jsx';
 import CreateBox from './components/CreateBox.jsx';
 import ImportView from './components/ImportView.jsx';
+import Navbar from './components/Navbar.jsx';
 
 export default function App() {
 
@@ -20,7 +21,7 @@ export default function App() {
         const sessionId = getCookie("sessionid")
 
         if (!sessionId){
-            fetch("http://127.0.0.1:8000", {
+            fetch("http://localhost:8000", {
                 method: "GET",
                 credentials: 'include'
             })
@@ -29,7 +30,7 @@ export default function App() {
     },[])
 
     useEffect(() => { // No começo do renderização do componente, ele verifica se o user já tem uma sessionKey.
-        fetch("http://127.0.0.1:8000/list", { // Agora o user tendo uma sessionKey, fazemos o fetch para ver quais arquivos ele tem guardado.
+        fetch("http://localhost:8000/list", { // Agora o user tendo uma sessionKey, fazemos o fetch para ver quais arquivos ele tem guardado.
             method: "GET",
             credentials: 'include'
         })
@@ -44,7 +45,7 @@ export default function App() {
         if (mode !== "home") {
             console.log(`Irei fazer o fetch no modo: ${mode}`)
             console.log(apiData)
-            fetch(`http://127.0.0.1:8000/acess/${apiData.filename}/${lineNumber}`, {
+            fetch(`http://localhost:8000/acess/${apiData.filename}/${lineNumber}`, {
                 method: "GET",
                 credentials: 'include'
             })
@@ -61,7 +62,7 @@ export default function App() {
 
     // Functions -----------
     function openFile(fileName){
-        fetch(`http://127.0.0.1:8000/acess/${fileName}/${lineNumber}`, {
+        fetch(`http://localhost:8000/acess/${fileName}/${lineNumber}`, {
             method: "GET",
             credentials: 'include'
         })
@@ -94,7 +95,7 @@ export default function App() {
     function handleEdit(event) {
         event.preventDefault()
 
-        fetch(`http://127.0.0.1:8000/edit/${apiData.filename}/${lineNumber}`, {
+        fetch(`http://localhost:8000/edit/${apiData.filename}/${lineNumber}`, {
             method: "POST",
             credentials: 'include',
             headers: {
@@ -115,7 +116,7 @@ export default function App() {
         const formData = form.append.value
         const formatedJson = jsonFormater(formData.toString())
         
-        fetch(`http://127.0.0.1:8000/append/${apiData.filename}`, {
+        fetch(`http://localhost:8000/append/${apiData.filename}`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -137,7 +138,7 @@ export default function App() {
         const formData = form.create.value
         const formatedJson = jsonFormater(formData.toString())
         
-        fetch(`http://127.0.0.1:8000/create`, {
+        fetch(`http://localhost:8000/create`, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -198,7 +199,7 @@ export default function App() {
         event.preventDefault()
         const form = event.currentTarget
         const formData = new FormData(form)       
-        fetch("http://127.0.0.1:8000/import", {
+        fetch("http://localhost:8000/import", {
             method: "POST",
             credentials: 'include',
             headers: {
@@ -212,7 +213,7 @@ export default function App() {
     }
 
     function handleDownload(fileName){
-        fetch(`http://127.0.0.1:8000/drd/${fileName}`, {
+        fetch(`http://localhost:8000/drd/${fileName}`, {
             method: "GET",
             credentials: 'include'
         })
@@ -237,7 +238,7 @@ export default function App() {
         const new_name = `${formData}.jsonl`
 
         console.log("Eu escrevi ", formData)
-        fetch(`http://127.0.0.1:8000/drd/${fileName}`, {
+        fetch(`http://localhost:8000/drd/${fileName}`, {
             method: "POST",
             credentials: 'include',
             headers: {
@@ -254,7 +255,7 @@ export default function App() {
     }
 
     function handleDelete(fileName){
-        fetch(`http://127.0.0.1:8000/drd/${fileName}`, {
+        fetch(`http://localhost:8000/drd/${fileName}`, {
             method: "DELETE",
             credentials: 'include',
             headers: {
@@ -265,71 +266,99 @@ export default function App() {
             window.location.reload()
         })
     }
-
+    
     //renderização final.
     switch (mode) {
         case "home":
             return(
-                <HomeView
-                    apiData={apiData}
-                    openFile={openFile}
-                    setMode={setMode}
-                    userFiles={userFiles}
-                    handleDownload={handleDownload}
-                    handleRename={handleRename}
-                    handleDelete={handleDelete}
-                ></HomeView>
-            )
-        case "acess":
-            return(
-                <AcessView
-                    apiData={apiData}
-                    lineNumber={lineNumber}
-                    setMode={setMode}
-                    changeLineNumber={changeLineNumber}
-                ></AcessView>
-            )
-        case "edit":
-            return(
-                <EditView
-                    apiData={apiData}
-                    lineNumber={lineNumber}
-                    handleChange={handleChange}
-                    setMode={setMode}
-                    changeLineNumber={changeLineNumber}
-                    handleEdit={handleEdit}
-                ></EditView>
-            )
-        case "append":
-            return(
-                <AppendView
-                    handleAppend={handleAppend}
-                    setMode={setMode}
-                ></AppendView>
-            )
-        case "create":
-            return(
-                <CreateBox
-                    handleCreate={handleCreate}
-                    setMode={setMode}
-                ></CreateBox>
+                <div className="external-container">
+                    <Navbar
+                        setMode={setMode}
+                    />
+                    <HomeView
+                        apiData={apiData}
+                        openFile={openFile}
+                        setMode={setMode}
+                        userFiles={userFiles}
+                        handleDownload={handleDownload}d
+                        handleRename={handleRename}
+                        handleDelete={handleDelete}
+                    />
+                </div>
             )
         case "import":
             return(
-            <div>
-                <HomeView
-                    apiData={apiData}
-                    openFile={openFile}
-                    setMode={setMode}
-                    userFiles={userFiles}
-                    handleDownload={handleDownload}
-                    handleRename={handleRename}
-                    handleDelete={handleDelete}
-                ></HomeView>
-                <ImportView
-                    handleImport={handleImport}
-                ></ImportView>
-            </div>
+                <div className="external-container">
+                    <Navbar
+                        setMode={setMode}
+                    />
+                    <HomeView
+                        apiData={apiData}
+                        openFile={openFile}
+                        setMode={setMode}
+                        userFiles={userFiles}
+                        handleDownload={handleDownload}
+                        handleRename={handleRename}
+                        handleDelete={handleDelete}
+                    />
+                    <ImportView
+                        handleImport={handleImport}
+                    />
+                </div>
+            )
+        case "acess":
+            return(
+                <div className="external-container">
+                    <Navbar
+                        setMode={setMode}
+                    />
+                    <AcessView
+                        apiData={apiData}
+                        lineNumber={lineNumber}
+                        setMode={setMode}
+                        changeLineNumber={changeLineNumber}
+                    />
+                </div>
+            )
+        case "edit":
+            return(
+                <div className="external-container">
+                    <Navbar
+                        setMode={setMode}
+                    />
+                    <EditView
+                        apiData={apiData}
+                        lineNumber={lineNumber}
+                        handleChange={handleChange}
+                        setMode={setMode}
+                        changeLineNumber={changeLineNumber}
+                        handleEdit={handleEdit}
+                    />
+                </div>
+            )
+        case "append":
+            return(
+                <div className="external-container">
+                    <Navbar
+                        setMode={setMode}
+                    />
+                    <AppendView
+                        handleAppend={handleAppend}
+                        setMode={setMode}
+                    />
+                </div>
+            )
+        case "create":
+            return(
+                <div className="external-container">
+                    <Navbar
+                        setMode={setMode}
+                    />
+                    <CreateBox
+                        handleCreate={handleCreate}
+                        setMode={setMode}
+                    />
+                </div>
             )
         default:
             return(

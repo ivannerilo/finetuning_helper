@@ -11,18 +11,16 @@ class FileUser(models.Model):
     user_session = models.CharField(max_length=255)
     file_name = models.CharField(max_length=255, unique=True)
 
-    def clean(self):
-        if not self.file.name.endswith(".jsonl"):
-            raise ValidationError("Arquivo precisa ser JSONL.")
+    # def clean(self):
+    #     if not self.file.name.endswith(".jsonl"):
+    #         raise ValidationError("Arquivo precisa ser JSONL.")
 
-        mime_type, encoding = mimetypes.guess_type(self.file.name)
-        if mime_type != "application/json":
-            raise ValidationError("Arquivo precisa ser JSONL.")
+    #     mime_type, encoding = mimetypes.guess_type(self.file.name)
+    #     if mime_type != "application/json":
+    #         raise ValidationError("Arquivo precisa ser JSONL.")
 
 
     def save(self, *args, **kwargs):
-        
-
         if self.file:
             self.file_name = self.file.name.split('/')[-1]
         super().save(*args, **kwargs)
