@@ -1,8 +1,8 @@
 export default function Navbar({ setMode }){
     return(
         <nav className="navbar">
-            <a className="nav-anchor" onClick={() => setMode("create")}>Criar novo JSON</a>
-            <a className="nav-anchor" onClick={() => setMode("import")}>Importar arquivo JSON</a>
+            <h2 className="nav-title">Fine Tuning Helper</h2>
+            <a className="nav-anchor" onClick={() => setMode("home")}>Home</a>
         </nav>
     )
 }

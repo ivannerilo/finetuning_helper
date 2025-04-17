@@ -195,10 +195,7 @@ export default function App() {
         })   
     }
 
-    function handleImport(event){
-        event.preventDefault()
-        const form = event.currentTarget
-        const formData = new FormData(form)       
+    function handleImport(formData){ 
         fetch("http://localhost:8000/import", {
             method: "POST",
             credentials: 'include',
@@ -280,7 +277,7 @@ export default function App() {
                         openFile={openFile}
                         setMode={setMode}
                         userFiles={userFiles}
-                        handleDownload={handleDownload}d
+                        handleDownload={handleDownload}
                         handleRename={handleRename}
                         handleDelete={handleDelete}
                     />
@@ -292,17 +289,9 @@ export default function App() {
                     <Navbar
                         setMode={setMode}
                     />
-                    <HomeView
-                        apiData={apiData}
-                        openFile={openFile}
-                        setMode={setMode}
-                        userFiles={userFiles}
-                        handleDownload={handleDownload}
-                        handleRename={handleRename}
-                        handleDelete={handleDelete}
-                    />
                     <ImportView
                         handleImport={handleImport}
+                        setMode={setMode}
                     />
                 </div>
             )

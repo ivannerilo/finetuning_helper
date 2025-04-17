@@ -1,4 +1,4 @@
-export default function HomeView({userFiles, openFile, handleDownload, handleDelete, handleRename}) {
+export default function HomeView({userFiles, openFile, handleDownload, handleDelete, handleRename, setMode}) {
 
     function openForm(index){
         const form = document.getElementById(index)
@@ -37,14 +37,21 @@ export default function HomeView({userFiles, openFile, handleDownload, handleDel
         })
     } 
     catch {
-        files = <span className="file-item">Você não tem arquivos ainda!</span>
+        files = <h3>Você não tem arquivos ainda!</h3>
     }
     return (
-        <div className="file-container">
+        <div className="central-container">
+
             <h1 className="file-title">Acessar arquivo:</h1>
             <div className="file-list">
                 {files}
             </div>
+
+            <div className="file-options-container">
+                <button title="Criar JSON" className="file-options-container-button" onClick={() => setMode("create")}>Criar um novo JSON</button>
+                <button title="Importar JSON" className="file-options-container-button" onClick={() => setMode("import")}>Importar um arquivo JSON</button>
+            </div>
+
         </div>
     )
 }
