@@ -3,11 +3,17 @@ p {
     margin: 0px;
 }
 
+textarea {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: large;
+    padding: 15px;
+    letter-spacing: 1px;
+}
 
 
 
 
-/* ----- Body e container central */
+/* ----- Body e Reutilizaveis */
 body {
     margin: 0px;
     background-color: #D9D9D9;
@@ -28,6 +34,17 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 30px;
+}
+
+.submit-form-button {
+    height: 30px;
+    width: 120px;
+    background-color: rgb(51, 51, 146);
+    color: white;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 5px;
+    margin: 20px;
 }
 
 
@@ -87,16 +104,13 @@ body {
 
 
 /* ----- File List */
-.file-list {
-
-}
 
 .file-item {
     background-color:#eeeeee;
     display: flex;
-    flex-direction: row;
-    width: 840px;
-    height: 60px;
+    flex-direction: column;
+    width: auto;
+    height: auto;
     margin: 20px;
     border-radius: 5px;
     /* offset-x | offset-y | blur-radius | spread-radius | color */
@@ -104,13 +118,58 @@ body {
     justify-content: center;
 }
 
-.file-item > span {
+.file-item-central-div {
+    width: 840px;
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.file-item-central-div > span {
     margin-left: 30px;
     width: 100%;
     height: 100%;
     display: flex;
     cursor: pointer;
     align-items: center;
+}
+
+.file-item-form-div {
+    width: 840px;
+}
+
+.file-item-form {
+    width: 840px;
+    height: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.file-item-form > input{
+    width: 300px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    background-color: #D9D9D9;
+    margin: 5px 5px 5px 15px;
+
+}
+
+.file-item-form-button {
+    height: 30px;
+    width: 100px;
+    background-color: rgb(51, 51, 146);
+    color: white;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 5px;
+    margin: 5px 10px 5px auto;
 }
 
 
@@ -153,7 +212,7 @@ body {
     border: none;
     color: black;
     margin: 5px 5px 5px 5px;
-    background-image: url(./static-icons/download-direto.png);
+    background-image: url(./static-icons/downloads.png);
     display: inline-block;
     width: 24px;
     height: 24px;
@@ -192,25 +251,16 @@ body {
 }
 
 .import-file-input {
+    margin-top: 15px;
     display: flex;
+    flex-direction: row;
     height: 200px;
-    width: 520px;
+    width: 500px;
     color: black;
     border: 2px dashed black;
     border-radius: 5px;
     text-align: center;
     justify-content: center;
-}
-
-.import-file-button {
-    height: 30px;
-    width: 120px;
-    background-color: rgb(51, 51, 146);
-    color: white;
-    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-    border: none;
-    border-radius: 5px;
-    margin: 10px auto 10px 0px;
 }
 
 #file-input {
@@ -223,4 +273,113 @@ body {
     height: 100%;
     cursor: pointer;
 }
+
+
+
+
+
+/* ----- Create Json */
+.create-json {
+    background-color:#eeeeee;
+    display: flex;
+    flex-direction: column;
+    width: 1450px;
+    height: 550px;
+    margin: 20px;
+    border-radius: 5px;
+    /* offset-x | offset-y | blur-radius | spread-radius | color */
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    align-items: center;
+    justify-content: center;
+}
+
+.create-json-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.create-json-form > button {
+    margin: 15px auto 15px 0px;
+}
+
+.create-json-textarea {
+    background-color: #D9D9D9;
+    border-radius: 5px;
+}
+
+
+
+
+
+/* ----- Acess Json */
+.message-item {
+    background-color:#eeeeee;
+    display: flex;
+    flex-direction: column;
+    width: 1240px;
+    height: 240px;
+    margin: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    /* offset-x | offset-y | blur-radius | spread-radius | color */
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    justify-content: center;
+}
+
+.message-item-textarea {
+    background-color: #D9D9D9;
+    border-radius: 5px;
+    border: none;
+}
+
+.message-item-textarea:focus { 
+    outline: none;
+}
+
+.edit-item-textarea {
+    background-color: #D9D9D9;
+    border-radius: 5px;
+    border: none;
+}
+
+.acess-buttons {
+    display: flex;
+    flex-direction: row;
+    width: 1240px;
+}
+
+.acess-options-buttons{
+    margin-right: auto;
+}
+
+.acess-back-next-buttons{
+    margin-left: auto;
+}
+
+.acess-json-options-button {
+    height: 40px;
+    width: 100px;
+    background-color: black;
+    color: white;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 5px;
+    margin: 10px 5px 0px 5px;
+}
+
+
+
+
+
+/* ----- Append Json */
+.append-buttons {
+    display: flex;
+    flex-direction: row;
+    width: 1450px;
+}
+
+
+
+
 

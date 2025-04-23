@@ -156,6 +156,7 @@ export default function App() {
                 ...userFiles,
                 data.new_file
             ])
+            window.location.reload()
         });
 
 

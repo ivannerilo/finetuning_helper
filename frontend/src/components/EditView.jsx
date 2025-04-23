@@ -16,20 +16,22 @@ export default function EditView({apiData, lineNumber, handleChange, setMode, ch
     }
     
     return(
-        <div>
+        <div className="central-container">
             <h1>Line: {lineNumber}</h1>
-            <div>
-                <button onClick={() => setMode("acess")}>View</button>
-                <button onClick={() => setMode("append")}>Append</button>
-                <button onClick={() => setMode("home")}>Home</button>
-            </div>
-            <div>
-                <button onClick={() => changeLineNumber('-')}>Back</button>
-                <button onClick={() => changeLineNumber('+')}>Next</button>                
+            <div className="acess-buttons">
+                <div className="acess-options-buttons">
+                    <button className="acess-json-options-button" onClick={() => setMode("acess")}>View</button>
+                    <button className="acess-json-options-button" onClick={() => setMode("append")}>Append</button>
+                </div>
+
+                <div className="acess-back-next-buttons">
+                    <button className="acess-json-options-button" onClick={() => changeLineNumber('-')}>Back</button>
+                    <button className="acess-json-options-button" onClick={() => changeLineNumber('+')}>Next</button>                
+                </div>
             </div>
             <form onSubmit={handleEdit}>
                 {messagesForm ? messagesForm : "Carregando..."}
-                <button type='submit'>Edit</button>
+                <button type='submit' className="submit-form-button">Edit</button>
             </form>
         </div>
     )

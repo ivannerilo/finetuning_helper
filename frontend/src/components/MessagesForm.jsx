@@ -17,16 +17,16 @@ export default function MessagesBox({text, role, name, handleChange}){
     }
 
     return(
-        <>
-            <h1>{role}</h1>
-            <span>{name}</span>
-            <textarea 
-                name={name}
-                onChange={(event) => changeInputValue(event.target.value, "content")}
-                defaultValue={textState}
-                rows='20'
-                cols='200'
-            ></textarea>
-        </>
+        <div className="message-item">
+        <h1>{role}</h1>
+        <textarea 
+            className="edit-item-textarea"
+            name={name}
+            defaultValue={textState}
+            onChange={(event) => changeInputValue(event.target.value, "content")}
+            rows='20'
+            cols='200'
+        ></textarea>
+        </div>
     )
 }

@@ -13,16 +13,19 @@ export default function AcessView({apiData, lineNumber, setMode, changeLineNumbe
         })
     }
     return(
-        <div>
+        <div className="central-container">
             <h1>Line: {lineNumber}</h1>
-            <div>
-                <button onClick={() => setMode("edit")}>Edit</button>
-                <button onClick={() => setMode("append")}>Append</button>
-                <button onClick={() => setMode("home")}>Home</button>
-            </div>
-            <div>
-                <button onClick={() => changeLineNumber('-')}>Back</button>
-                <button onClick={() => changeLineNumber('+')}>Next</button>                
+            <div className="acess-buttons">
+
+                <div className="acess-options-buttons">
+                    <button className="acess-json-options-button" onClick={() => setMode("edit")}>Edit</button>
+                    <button className="acess-json-options-button" onClick={() => setMode("append")}>Append</button>
+                </div>
+
+                <div className="acess-back-next-buttons">
+                    <button className="acess-json-options-button" onClick={() => changeLineNumber('-')}> ⬅️ Back</button>
+                    <button className="acess-json-options-button" onClick={() => changeLineNumber('+')}>Next ➡️ </button>                
+                </div>
             </div>
             {messagesComponents ? messagesComponents.slice(1) : "Carregando..."}
         </div>

@@ -16,19 +16,23 @@ export default function HomeView({userFiles, openFile, handleDownload, handleDel
             return (
                 <div className="file-item">
 
-                    <span key={fileId++} onClick={() => openFile(file)}>{file}</span>
+                    <div className="file-item-central-div">
+                        <span key={fileId++} onClick={() => openFile(file)}>{file}</span>
 
-                    <div className="file-item-buttons">
-                        <button title="Download" className="file-item-buttons-download-button" onClick={() => handleDownload(file)}></button>
-                        <button title="Delete" className="file-item-buttons-delete-button" onClick={() => handleDelete(file)}></button>
-                        <button title="Rename" className="file-item-buttons-rename-button" onClick={() => openForm(index)}></button>
+                        <div className="file-item-buttons">
+                            <button title="Download" className="file-item-buttons-download-button" onClick={() => handleDownload(file)}></button>
+                            <button title="Delete" className="file-item-buttons-delete-button" onClick={() => handleDelete(file)}></button>
+                            <button title="Rename" className="file-item-buttons-rename-button" onClick={() => openForm(index)}></button>
+                        </div>
                     </div>
 
-                    <div className="file-item-form">
+                    <div className="file-item-form-div">
                         <form id={index} style={{display: 'none'}} method="post" onSubmit={(event) => handleRename(event, file)}>
-                            <input name="new" type="text"></input>
-                            <span>.jsonl</span>
-                            <button type="submit">Submit</button>
+                            <div className="file-item-form">
+                                <input name="new" type="text"></input>
+                                <span>.jsonl</span>
+                                <button type="submit" className="file-item-form-button" >Submit</button>
+                            </div>
                         </form>
                     </div>
 

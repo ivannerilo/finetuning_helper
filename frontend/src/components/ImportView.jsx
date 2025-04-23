@@ -43,7 +43,7 @@ export default function ImportView({ handleImport, setMode}){
                     </label>
                 </div>
                 <input id="file-input" type="file" name="file" onChange={handleChange}></input>
-                <button className="import-file-button" type="submit">Enviar arquivo</button>
+                <button className="submit-form-button" type="submit">Enviar arquivo</button>
             </form>
         </div>
 
