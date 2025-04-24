@@ -162,19 +162,16 @@ export default function App() {
 
     }
 
-    function handleChange(name, key, value) {
-        console.log(name)
-        console.log(value)
-        console.log(key)
-
-        function processContent(messageContent, value) {
+    function handleChange(name, role, text) {
+        
+        function processContent(messageContent, text) {
             if (Array.isArray(messageContent)){
                 return [{
                     ...messageContent[0],
-                    text: value
+                    text: text
                 }]
             }
-            return value
+            return text
         }
 
         setApiData((prev) => { 
@@ -184,10 +181,12 @@ export default function App() {
                     ...prev.jsonline, 
                     messages: prev.jsonline.messages.map((message, index) => { 
                         return index === name ? { 
-                            ...message, 
-                            content: processContent(message.content, value)
+                            ...message,
+                            role: role, 
+                            content: processContent(message.content, text)
                         } : { 
                             ...message,
+                            role: message.role,
                             content: message.content
                         };  
                     })

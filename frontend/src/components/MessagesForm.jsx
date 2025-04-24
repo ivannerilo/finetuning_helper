@@ -7,18 +7,29 @@ export default function MessagesBox({text, role, name, handleChange}){
     useEffect(() => {
         setTextState(text);
         setRoleState(role);
-    }, [text]);
+    }, [text, role]);
 
     function changeInputValue(value, key){
-        console.log("ChangeInput value:")
-        console.log(value)
-        setTextState(value)
-        handleChange(name, key, value)
+        switch (key) {
+            case "content":
+                setTextState(value)
+                handleChange(name, roleState, value)
+                break
+
+            case "role":
+                setRoleState(value)
+                handleChange(name, value, textState)
+                break
+
+            default:
+                console.log("Invalid Key")
+                break
+        }
     }
 
     return(
         <div className="message-item">
-        <h1>{role}</h1>
+        <input className="edit-item-input" defaultValue={roleState} onChange={(event) => changeInputValue(event.target.value, "role")}></input>
         <textarea 
             className="edit-item-textarea"
             name={name}

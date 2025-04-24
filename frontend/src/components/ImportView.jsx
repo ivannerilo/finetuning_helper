@@ -37,12 +37,12 @@ export default function ImportView({ handleImport, setMode}){
 
         <div className="import-file">
             <form className="import-file-form" method="post" onSubmit={(event) => handleSubmit(event)}>
-                <div className="import-file-input" onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
-                    <label htmlFor="file-input" id="file-input-label">
-                        {fileName ? `Arquivo ${fileName} selecionado.` : "Clique ou solte o arquivo JSONL aqui:" }
-                    </label>
-                </div>
-                <input id="file-input" type="file" name="file" onChange={handleChange}></input>
+                    <div className="import-file-input" onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
+                        <label htmlFor="file-input" id="file-input-label">
+                            {fileName ? `Arquivo ${fileName} selecionado.` : "Clique ou solte o arquivo JSONL aqui:" }
+                        </label>
+                    </div>
+                    <input id="file-input" type="file" name="file" onChange={handleChange}></input>
                 <button className="submit-form-button" type="submit">Enviar arquivo</button>
             </form>
         </div>
