@@ -11,6 +11,15 @@ export default function EditView({apiData, lineNumber, handleChange, setMode, ch
         />
     )
 
+    messagesForm.push(
+        <MessagesForm
+            text={apiData.jsonline.tools}
+            role={"Function"}
+            name={"tools"}
+            handleChange={handleChange}
+        />
+    )
+
     // if (apiData && apiData.jsonline && apiData.jsonline.messages) {
     //     let id = 0;
     //     messagesForm = apiData.jsonline.messages.map(message => {

@@ -20,7 +20,6 @@ UPLOAD_TO = "files/"
 @ensure_csrf_cookie
 @api_view(['GET'])
 def index(request):
-    print(request)
     if not request.session.session_key:
         request.session.create()
 
@@ -29,7 +28,6 @@ def index(request):
 
 @api_view(['GET'])
 def lsfiles(request):
-    print(request)
     file_user_arr = FileUser.objects.filter(user_session=request.session.session_key).values_list("file_name", flat=True)
     print(file_user_arr)
 
@@ -62,8 +60,7 @@ def edit(request, file_name, line_number):
     
     user_file = FileUser.objects.filter(user_session=request.session.session_key, file_name=file_name)
     if user_file:
-        new_json_dict = json.loads(request.body)
-        print(new_json_dict)
+        new_json_dict = request.data
         util.json_file_editor(new_json_dict["jsonline"], line_number, file_name)
 
         return Response({"message": "success"})
@@ -78,10 +75,8 @@ def append(request, file_name):
     user_file = FileUser.objects.filter(user_session=request.session.session_key, file_name=file_name)
     if user_file:
         # Recebendo o JSON já formatado.
-        request_body = json.loads(request.body)
-        print(request_body)
+        request_body = request.data
         new_json_string = request_body["jsonline_string"]
-        print(new_json_string)
         json_dict = json.loads(new_json_string)
 
         # Escrevendo no arquivo destino, modo append.
@@ -123,9 +118,7 @@ def download_rename_delete_json(request, file_name):
     
     match request.method:
         case 'GET':
-            print(f"Baixou papai")
             file = FileUser.objects.get(file_name=file_name, user_session=request.session.session_key)
-            print(f"Download => {file.file_name}")
             response = FileResponse(open(f"{DEFAUL_FILE_ROUTE}{file.file_name}", "rb"), as_attachment=True)
             response["content-disposition"] =  f'attachment; filename="{file_name}"'
             return response
@@ -135,13 +128,11 @@ def download_rename_delete_json(request, file_name):
             new_name = request_body["newname"]
             file_user = FileUser.objects.get(file_name=file_name, user_session=request.session.session_key)
             util.json_renamer(file_user, new_name)
-            print(f"json_renamer({file_user.user_session}, {file_name}) para {new_name}")
 
             return Response({"message": "Renomeou papai", "newname": new_name})
         
 
         case 'DELETE':
-            print(f"Deletou papai {file_name}")
             try:
                 file = FileUser.objects.get(file_name=file_name, user_session=request.session.session_key)
                 file.delete()
@@ -156,8 +147,6 @@ def import_json(request):
     
     uploaded_file = request.FILES
     if uploaded_file:
-        print("Arquivinho papaiii")
-        print(f"SessionKey {request.session.session_key}")
         data = FileUser(
             file = uploaded_file["file"],
             user_session = request.session.session_key
