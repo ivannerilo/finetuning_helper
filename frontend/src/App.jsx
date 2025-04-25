@@ -3,6 +3,7 @@ import {jsonFormater, getCookie} from './utils.js';
 import HomeView from './components/HomeView.jsx';
 import AcessView from './components/AcessView.jsx';
 import EditView from './components/EditView.jsx';
+import EditAllView from "./components/EditAllView.jsx"
 import AppendView from './components/AppendView.jsx';
 import CreateBox from './components/CreateBox.jsx';
 import ImportView from './components/ImportView.jsx';
@@ -346,6 +347,23 @@ export default function App() {
                     <CreateBox
                         handleCreate={handleCreate}
                         setMode={setMode}
+                    />
+                </div>
+            )
+
+        case "edit-all":
+            return(
+                <div className="external-container">
+                    <Navbar
+                        setMode={setMode}
+                    />
+                    <EditAllView
+                        apiData={apiData}
+                        lineNumber={lineNumber}
+                        handleChange={handleChange}
+                        setMode={setMode}
+                        changeLineNumber={changeLineNumber}
+                        handleEdit={handleEdit}
                     />
                 </div>
             )

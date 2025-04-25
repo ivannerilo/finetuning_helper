@@ -20,6 +20,7 @@ export default function AcessView({apiData, lineNumber, setMode, changeLineNumbe
                 <div className="acess-options-buttons">
                     <button className="acess-json-options-button" onClick={() => setMode("edit")}>Edit</button>
                     <button className="acess-json-options-button" onClick={() => setMode("append")}>Append</button>
+                    <button className="acess-json-options-button" onClick={() => setMode("edit-all")}>Edit All</button>
                 </div>
 
                 <div className="acess-back-next-buttons">
