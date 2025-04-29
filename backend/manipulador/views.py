@@ -61,6 +61,8 @@ def edit(request, file_name, line_number):
     user_file = FileUser.objects.filter(user_session=request.session.session_key, file_name=file_name)
     if user_file:
         new_json_dict = request.data
+        print("Porcodiu")
+        print(new_json_dict)
         util.json_file_editor(new_json_dict["jsonline"], line_number, file_name)
 
         return Response({"message": "success"})
