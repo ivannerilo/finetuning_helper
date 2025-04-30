@@ -1,5 +1,7 @@
 import {useEffect, useState} from 'react'
 import {jsonFormater, getCookie} from './utils.js';
+import set from 'lodash/set'
+
 import HomeView from './components/HomeView.jsx';
 import AcessView from './components/AcessView.jsx';
 import EditView from './components/EditView.jsx';
@@ -63,6 +65,7 @@ export default function App() {
 
     // Functions -----------
     function openFile(fileName){
+        setLineNumber(0)
         fetch(`http://localhost:8000/acess/${fileName}/${lineNumber}`, {
             method: "GET",
             credentials: 'include'
@@ -163,38 +166,35 @@ export default function App() {
 
     }
 
-    function handleChange(name, role, text) {
-        
-        function processContent(messageContent, text) {
-            if (Array.isArray(messageContent)){
-                return [{
-                    ...messageContent[0],
-                    text: text
-                }]
-            }
-            return text
-        }
-
-        setApiData((prev) => { 
-            return { 
-                ...prev,
-                jsonline:{
-                    ...prev.jsonline, 
-                    messages: prev.jsonline.messages.map((message, index) => { 
-                        return index === name ? { 
-                            ...message,
-                            role: role, 
-                            content: processContent(message.content, text)
-                        } : { 
-                            ...message,
-                            role: message.role,
-                            content: message.content
-                        };  
-                    })
-                }
-            }
-        })   
+    function handleChange(path, value) {
+        let copy = {...apiData}
+        set(copy, path, value)
+        setApiData(copy)
     }
+
+    function handleEditAll(event) {
+        event.preventDefault()
+        const form = event.currentTarget
+        const formData = new FormData(form)
+
+        const system = formData.get("system")
+        fetch(`http://localhost:8000/editall/${apiData.filename}`, {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFtoken": getCookie("csrftoken")
+            },  
+            body: JSON.stringify({
+                "new_value": system
+            })
+        })
+        .then(response => {
+            window.location.reload()
+        })
+        console.log(system)
+    }
+    
 
     function handleImport(formData){ 
         fetch("http://localhost:8000/import", {
@@ -321,7 +321,6 @@ export default function App() {
                         lineNumber={lineNumber}
                         handleChange={handleChange}
                         setMode={setMode}
-                        changeLineNumber={changeLineNumber}
                         handleEdit={handleEdit}
                     />
                 </div>
@@ -360,10 +359,8 @@ export default function App() {
                     <EditAllView
                         apiData={apiData}
                         lineNumber={lineNumber}
-                        handleChange={handleChange}
                         setMode={setMode}
-                        changeLineNumber={changeLineNumber}
-                        handleEdit={handleEdit}
+                        handleEditAll={handleEditAll}
                     />
                 </div>
             )

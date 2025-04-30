@@ -23,11 +23,6 @@ export default function EditView({apiData, lineNumber, handleChange, setMode, ch
                     <button className="acess-json-options-button" onClick={() => setMode("acess")}>View</button>
                     <button className="acess-json-options-button" onClick={() => setMode("append")}>Append</button>
                 </div>
-
-                <div className="acess-back-next-buttons">
-                    <button className="acess-json-options-button" onClick={() => changeLineNumber('-')}>Back</button>
-                    <button className="acess-json-options-button" onClick={() => changeLineNumber('+')}>Next</button>                
-                </div>
             </div>
             <form onSubmit={handleEdit}>
                 {messagesForm ? messagesForm : "Carregando..."}

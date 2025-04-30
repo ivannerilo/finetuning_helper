@@ -1,40 +1,25 @@
-import MessagesForm from "./MessagesForm"
+import {useState} from 'react'
+import ToolsForm from '../components/ToolsForm'
 
-export default function EditView({apiData, lineNumber, handleChange, setMode, changeLineNumber, handleEdit}){
-    let messagesForm = [];
-    messagesForm.push(
-        <MessagesForm
-            text={Array.isArray(apiData.jsonline.messages[0].content) ? apiData.jsonline.messages[0].content[0].text : apiData.jsonline.messages[0].content}
-            role={apiData.jsonline.messages[0].role}
-            name={"system"}
-            handleChange={handleChange}
-        />
-    )
+export default function EditView({apiData, lineNumber, handleEditAll, setMode}){
 
-    messagesForm.push(
-        <MessagesForm
-            text={apiData.jsonline.tools}
-            role={"Function"}
-            name={"tools"}
-            handleChange={handleChange}
-        />
-    )
-
-    // if (apiData && apiData.jsonline && apiData.jsonline.messages) {
-    //     let id = 0;
-    //     messagesForm = apiData.jsonline.messages.map(message => {
-    //         if (message.role === "system"){
-    //             const comp = <MessagesForm
-    //                 text={Array.isArray(message.content) ? message.content[0].text : message.content}
-    //                 role={message.role}
-    //                 name={id++} // ++ no java script passa o valor e depois incrementa ele.
-    //                 handleChange={handleChange}
-    //             />
-    //             return comp;
-    //         }
-    //     })
-    // }
+    const [system, setSystem] = useState(Array.isArray(apiData.jsonline.messages[0].content) ? apiData.jsonline.messages[0].content[0].text : apiData.jsonline.messages[0].content)
     
+    let toolsForms = [];
+    if (apiData && apiData.jsonline && apiData.jsonline.tools) {
+        let id = 0;
+        toolsForms = apiData.jsonline.tools.map(tool => {
+            const comp = <ToolsForm
+                name={tool.function.name}
+                parameters={tool.function.parameters}
+                description={tool.function.description} 
+                id={id++}
+            />
+            return comp;
+        })
+    }
+
+
     return(
         <div className="central-container">
             <h1>Line: {lineNumber}</h1>
@@ -43,16 +28,25 @@ export default function EditView({apiData, lineNumber, handleChange, setMode, ch
                     <button className="acess-json-options-button" onClick={() => setMode("acess")}>View</button>
                     <button className="acess-json-options-button" onClick={() => setMode("append")}>Append</button>
                 </div>
-
-                <div className="acess-back-next-buttons">
-                    <button className="acess-json-options-button" onClick={() => changeLineNumber('-')}>Back</button>
-                    <button className="acess-json-options-button" onClick={() => changeLineNumber('+')}>Next</button>                
-                </div>
             </div>
-            <form onSubmit={handleEdit}>
-                {messagesForm ? messagesForm : "Carregando..."}
+            <form onSubmit={handleEditAll}>
+
+                <div className="edit-all-item">
+                    <span className="edit-item-input">{apiData.jsonline.messages[0].role}</span>
+                    <textarea 
+                        className="edit-item-textarea"
+                        name={"system"}
+                        defaultValue={system}
+                        onChange={(event) => setSystem(event.currentTarget.value)}
+                        rows='20'
+                        cols='200'
+                    ></textarea>
+                </div>
+                <p className="edit-item-input"> Tools </p>
+                {toolsForms ? toolsForms : "Carregando..."}
                 <button type='submit' className="submit-form-button">Edit</button>
             </form>
         </div>
     )
 }
+

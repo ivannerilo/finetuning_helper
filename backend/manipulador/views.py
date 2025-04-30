@@ -70,6 +70,32 @@ def edit(request, file_name, line_number):
     return Response({"message": "You dont have acess!"})
 
 @api_view(['POST'])
+def edit_all(request, file_name):
+    if request.method != 'POST':
+        return Response({"message": "Need to be POST!!!"})
+        
+    
+    user_file = FileUser.objects.filter(user_session=request.session.session_key, file_name=file_name)
+    if user_file:
+        request_body = request.data
+        new_value = request_body["new_value"]
+
+        for i in range(util.json_file_size(file_name)):
+            json_line = util.json_reader(i, file_name)
+
+            if isinstance(json_line["messages"][0]["content"], list):
+                json_line["messages"][0]["content"][0]["text"] = new_value
+            else:
+                json_line["messages"][0]["content"] = new_value
+            
+            util.json_file_editor(json_line, i, file_name)
+            
+
+        return Response({"message": "success"})
+
+    return Response({"message": "You dont have acess!"})
+
+@api_view(['POST'])
 def append(request, file_name):
     if request.method != 'POST':
         return Response({"message": "Need to be POST!!!"})
@@ -156,3 +182,4 @@ def import_json(request):
         data.save()
     
     return Response({"message": "demonho"})
+

@@ -61,10 +61,9 @@ CORS_ALLOW_CREDENTIALS = True
 
 # CONFIGURAÇÕES SESSIONS -----
 SESSION_ENGINE = "django.contrib.sessions.backends.db"  # Usa o banco de dados para armazenar sessões
-SESSION_COOKIE_AGE = 86400  # A sessão dura 1 dia (qtd segundos)
+SESSION_COOKIE_AGE = 31540000  # A sessão dura 1 dia (qtd segundos)
 SESSION_SAVE_EVERY_REQUEST = False  
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-
 SESSION_COOKIE_SAMESITE = "Lax"
 SESSION_COOKIE_HTTPONLY = False
 SESSION_COOKIE_SECURE = False

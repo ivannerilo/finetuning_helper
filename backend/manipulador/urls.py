@@ -11,5 +11,6 @@ urlpatterns = [
     path("append/<str:file_name>", views.append, name="append"),
     path("create", views.create, name="create"),
     path("drd/<str:file_name>", views.download_rename_delete_json, name="download_rename_delete_json"),
-    path("import", views.import_json, name="import_json")
+    path("import", views.import_json, name="import_json"),
+    path("editall/<str:file_name>", views.edit_all, name="edit_all")
 ]

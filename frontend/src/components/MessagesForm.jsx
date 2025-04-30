@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 
-export default function MessagesBox({text, role, name, handleChange}){
+export default function MessagesBox({text, role, id, handleChange}){
     const [textState, setTextState] = useState(text)
     const [roleState, setRoleState] = useState(role)
 
@@ -9,32 +9,14 @@ export default function MessagesBox({text, role, name, handleChange}){
         setRoleState(role);
     }, [text, role]);
 
-    function changeInputValue(value, key){
-        switch (key) {
-            case "content":
-                setTextState(value)
-                handleChange(name, roleState, value)
-                break
-
-            case "role":
-                setRoleState(value)
-                handleChange(name, value, textState)
-                break
-
-            default:
-                console.log("Invalid Key")
-                break
-        }
-    }
-
     return(
         <div className="message-item">
-        <input className="edit-item-input" defaultValue={roleState} onChange={(event) => changeInputValue(event.target.value, "role")}></input>
+        <input className="edit-item-input" defaultValue={roleState} onChange={(event) => handleChange(`jsonline.messages[${id}].role`, event.target.value)}></input>
         <textarea 
             className="edit-item-textarea"
-            name={name}
+            name={id}
             defaultValue={textState}
-            onChange={(event) => changeInputValue(event.target.value, "content")}
+            onChange={(event) => handleChange(`jsonline.messages[${id}].content`, event.target.value)}
             rows='20'
             cols='200'
         ></textarea>
