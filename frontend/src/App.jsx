@@ -18,6 +18,7 @@ export default function App() {
     const [lineNumber, setLineNumber] = useState(0);
     const [apiData, setApiData] = useState({});
     const [mode, setMode] = useState('home');
+    const [tools, setTools] = useState({})
 
     // Effects -----------
     useEffect(() => { // No começo do renderização do componente, ele verifica se o user já tem uma sessionKey.
@@ -54,9 +55,8 @@ export default function App() {
             })
             .then(response => response.json())
             .then(data => {
-                console.log("Data:")
-                console.log(data)
                 setApiData(data ? data : null)
+                setTools(data ? data.jsonline.tools : null)
                 setMode("acess")
             })
             .catch(err => console.log(err));
@@ -75,6 +75,9 @@ export default function App() {
             console.log("Data:")
             console.log(data)
             setApiData(data ? data : null)
+            setTools(data ? data.jsonline.tools : null)
+            console.log("Tools:")
+            console.log(data.jsonline.tools)
             setMode("acess")
         })
         .catch(err => console.log(err));
@@ -172,7 +175,7 @@ export default function App() {
         setApiData(copy)
     }
 
-    function handleEditAll(event) {
+    function handleEditAllSystem(event) {
         event.preventDefault()
         const form = event.currentTarget
         const formData = new FormData(form)
@@ -186,6 +189,7 @@ export default function App() {
                 "X-CSRFtoken": getCookie("csrftoken")
             },  
             body: JSON.stringify({
+                "key": "system",
                 "new_value": system
             })
         })
@@ -193,6 +197,39 @@ export default function App() {
             window.location.reload()
         })
         console.log(system)
+
+    }
+
+    function handleEditAllTools(event) {
+        event.preventDefault()
+
+        fetch(`http://localhost:8000/editall/${apiData.filename}`, {
+            method: "POST",
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFtoken": getCookie("csrftoken")
+            },  
+            body: JSON.stringify({
+                "key": "tools",
+                "new_value": tools
+            })
+        })
+        .then(response => {
+            window.location.reload()
+        })
+        console.log(tools)
+    }
+
+    function handleChangeTools(path, value) {
+        let copy = [...tools]
+        try {
+            set(copy, path, value.json())
+        } catch {
+            set(copy, path, value)
+        }
+        setTools(copy)
+        console.log(copy)
     }
     
 
@@ -360,7 +397,9 @@ export default function App() {
                         apiData={apiData}
                         lineNumber={lineNumber}
                         setMode={setMode}
-                        handleEditAll={handleEditAll}
+                        handleEditAllSystem={handleEditAllSystem}
+                        handleChangeTools={handleChangeTools}
+                        handleEditAllTools={handleEditAllTools}
                     />
                 </div>
             )

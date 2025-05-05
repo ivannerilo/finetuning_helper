@@ -61,8 +61,7 @@ def edit(request, file_name, line_number):
     user_file = FileUser.objects.filter(user_session=request.session.session_key, file_name=file_name)
     if user_file:
         new_json_dict = request.data
-        print("Porcodiu")
-        print(new_json_dict)
+        
         util.json_file_editor(new_json_dict["jsonline"], line_number, file_name)
 
         return Response({"message": "success"})
@@ -78,20 +77,33 @@ def edit_all(request, file_name):
     user_file = FileUser.objects.filter(user_session=request.session.session_key, file_name=file_name)
     if user_file:
         request_body = request.data
+        key = request_body["key"]
         new_value = request_body["new_value"]
 
-        for i in range(util.json_file_size(file_name)):
-            json_line = util.json_reader(i, file_name)
+        match key:
+            case "system":
+                for i in range(util.json_file_size(file_name)):
+                    json_line = util.json_reader(i, file_name)
 
-            if isinstance(json_line["messages"][0]["content"], list):
-                json_line["messages"][0]["content"][0]["text"] = new_value
-            else:
-                json_line["messages"][0]["content"] = new_value
-            
-            util.json_file_editor(json_line, i, file_name)
-            
+                    if isinstance(json_line["messages"][0]["content"], list):
+                        json_line["messages"][0]["content"][0]["text"] = new_value
+                    else:
+                        json_line["messages"][0]["content"] = new_value
+                    
+                    util.json_file_editor(json_line, i, file_name)
+                    
 
-        return Response({"message": "success"})
+                return Response({"message": "success"})
+
+            case "tools":
+                    for i in range(util.json_file_size(file_name)):
+                        json_line = util.json_reader(i, file_name)
+
+                        json_line["tools"] = new_value
+
+                        util.json_file_editor(json_line, i, file_name)
+
+                    return Response({"message": "success"})
 
     return Response({"message": "You dont have acess!"})
 

@@ -1,32 +1,38 @@
-import {useState, useEffect} from 'react';
+export default function ToolsForm({name, properties, description, handleChangeTools, id}){
 
-export default function ToolsForm({name, parameters, description, id}){
-    const [nameState, setNameState] = useState(name)
-    const [parametersState, setParametersState] = useState(parameters)
-    const [descriptionState, setDescriptionState] = useState(description)
+    function changeNameState(value, id){
+        handleChangeTools(`[${id}].function.name`, value)
+    }
 
-    useEffect(() => {
-        setNameState(name);
-        setParametersState(parameters);
-        setDescriptionState(description)
-    }, [name, parameters, description]);
+    function changePropertiesState(value, id){
+        console.log(value)
+        try {
+            handleChangeTools(`[${id}].function.parameters.properties`, JSON.parse(value))
+        } catch{
+            handleChangeTools(`[${id}].function.parameters.properties`, value)
+        }
+    }
+
+    function changeDescriptionState(value, id){
+        handleChangeTools(`[${id}].function.description`, value)
+    }
 
     return(
         <div className="edit-all-item">
-            <input className="edit-item-input" defaultValue={nameState} onChange={(event) => setNameState(event.target.value)}></input>
+            <input className="edit-item-input" defaultValue={name} onChange={(event) => changeNameState(event.target.value, id)} name={`name${id}`}></input>
             <textarea 
                 className="edit-all-item-textarea"
-                name={id}
-                defaultValue={parametersState}
-                onChange={(event) => setParametersState(event.target.value)}
-                rows='10'
+                name={`properties${id}`}
+                defaultValue={JSON.stringify(properties)}
+                onChange={(event) => changePropertiesState(event.target.value, id)}
+                rows='30'
                 cols='200'
             ></textarea>
             <textarea 
                 className="edit-all-item-textarea"
-                name={id}
-                defaultValue={descriptionState}
-                onChange={(event) => setDescriptionState(event.target.value)}
+                name={`description${id}`}
+                defaultValue={description}
+                onChange={(event) => changeDescriptionState(event.target.value, id)}
                 rows='20'
                 cols='200'
             ></textarea>
